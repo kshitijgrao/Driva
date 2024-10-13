@@ -1,37 +1,58 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Text, View, ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";
+import { Stack } from "expo-router";
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+export default function Index() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
+  const [currentPage, setCurrentPage] = useState<"Sign-In" | "Home" | "Error">("Sign-In"); // Initialize with "Sign-In"
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+  const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
+    console.log('onAuthStateChanged', user);
+    setUser(user);
+    if (initializing) {
+      setInitializing(false);
     }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+    // Set currentPage based on user authentication status
+    if (user) {
+      setCurrentPage("Sign-In"); // Change to "Home" if user is authenticated
+    } else {
+      setCurrentPage("Home"); // Keep it as "Sign-In" if not authenticated
+    }
   }
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+  useEffect(() => {
+    const sub = auth().onAuthStateChanged(onAuthStateChanged);
+    return sub;
+  })
+
+  if (initializing) {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex:1,
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  if (currentPage === "Sign-In") {
+    return (
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="index" />
       </Stack>
-    </ThemeProvider>
-  );
+    );
+
+  } else if (currentPage === "Home") {
+    return (
+      <Stack>
+        <Stack.Screen name="home" />
+      </Stack>
+    );
+  }
+  
 }

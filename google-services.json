@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "388628475911",
+    "project_id": "driva-ebb84",
+    "storage_bucket": "driva-ebb84.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388628475911:android:010095f886a2e4a36a3aa2",
+        "android_client_info": {
+          "package_name": "com.driva.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4flztceJDR1x91U4F_APtN8qPyLmeSPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
